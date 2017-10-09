@@ -34,10 +34,10 @@ __Aufgabe:__ Wie wurde 'Verkettung' und 'Länge' definiert? Fasse beides als Fun
  Definition für 'Wort_regexp' an.
  
  __Aufgabe:__ Sei Σ = {a, n, o, t}. Sind folgende Ausdrücke Wörter nach der Defintion von 'Wort' aus der Vorlesung?
-  * a:n:n\:a:#
-  * o:t:t:o
-  * a:n:n:a:#:o:t:t:o:#
-  * t:o:n:i:#
+  * `a:n:n:a:#`
+  * `o:t:t:o`
+  * `a:n:n:a:#:o:t:t:o:#`
+  * `t:o:n:i:#`
   
 ## Monoid (*)
   
