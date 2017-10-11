@@ -4,7 +4,8 @@
 * ganz ohne Installation [hier](http://tryhaskell.org/) Haskell austesten
 * oder per [Anleitung](https://docs.haskellstack.org/en/stable/README/) installieren
 * und dann die ersten [Hello World!](https://wiki.haskell.org/Haskell_in_5_steps)-Programme schreiben
-* zum Programmieren empfiehlt sich ein Editor mit Syntaxhervorhebung für Haskell bzw. eine Entwicklungsumgebung (mit Haskell-Plugin)
+* zum Programmieren empfiehlt sich ein Editor mit Syntaxhervorhebung für Haskell bzw. eine Entwicklungsumgebung (mit Haskell-Plugin), z.B. [Notepad++](https://bembengarifin.wordpress.com/2014/12/26/setting-up-notepad-for-haskell-programming/)
+* viele Probleme lassen sich auch schnell mit [Google](https://www.google.de/) oder einer anderen Suchmaschine lösen :sunglasses:
 
 ## Warm-up
 Definiere (informell) folgende Begriffe:
