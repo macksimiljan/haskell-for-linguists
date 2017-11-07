@@ -1,14 +1,41 @@
-# Warum-up
+# Tutorium 5: Bigramme
+
+## Warum-up
 __Aufgabe:__ Erkläre folgenden Ausdruck
 ```haskell
-filter ((==) w yield) allStructures
+filter ((==) w . yield) allStructures
 ```
 
 __Aufgabe:__ Erstelle einen Datentyp `Wochentag`, der die Wochentage, also `Montag`, `Dienstag` etc., enthält.
-Folgende Operation soll sinnvoll möglich sein: `min Montag Freitag`.
+Folgende Operation soll sinnvoll möglich sein: `min Montag Freitag`. Siehe [hier](http://www.fh-wedel.de/~si/seminare/ws03/Ausarbeitung/2.simple/layout6.htm).
 
+## Bigramme auf Zeichenketten
 
-# Notes
+__Aufgabe:__ Speichere das Modul `Bigrams` aus der Vorlesung. Definiere die Variable `myName` und rufe `makeBounded myName` auf.
+
+__Aufgabe:__ Warum wurde `Bigram` mit dem Key-Term `type` definiert und nicht mit `data` wie z.B. `Tree`?
+```haskell
+type Bigram a = (Bounds a, Bounds a) 
+```
+
+__Aufgabe:__ Als Korpus seien folgende Sätze gegeben:
+ * "Hans mag Erdbeeren."
+ * "Hans mag keine Rosen."
+ * "Maria mag Rosen."
+ 
+Erzeuge eine Grammatik basierend auf den Bigrammen der drei Sätze. Bestünde das Deutsche nur aus diesen sechs Wörtern, wie gut ist unsere Grammatik? Teste dazu die Grammatik mit weiteren Sätzen aus diesem 6-Wort-Deutsch und beurteile somit die Güte der Grammatik als Klassifikator.
+
+## Bigramme auf Bäumen
+
+__Aufgabe:__ Speichere das Modul `TreeGrams` aus der Vorlesung. Definiere den Baum S[ NP[ Hans ] VP[ V[ mag ] NP[ Erdbeeren] ] ] in einer Variablen `tree1`. Mache den Baum _rooted_.
+
+__Aufgabe:__ Um sich mit Baumbigrammen vertraut zu machen, weise der Variablen `treeVP` den _rooted_ Baum VP[ V NP ] zu und lasse dir die Bigramme von `treeVP` anzeigen.
+
+__Aufgabe:__ Lege den Korpus `corpusTree` an, der die Baumrepräsentation der obigen Sätze enthält.
+
+__Aufgabe:__ Erstelle die Bigrammgrammatik `grammarTree` zu `corpusTree`. Teste diese Grammatik.
+
+## Notes
 
 * Recognition: Ist w in L(G)?
 * Parsing: Welche Struktur liegt einem Wort zugrunde?
