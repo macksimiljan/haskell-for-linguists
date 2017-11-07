@@ -9,7 +9,7 @@ filter ((==) w . yield) allStructures
 __Aufgabe:__ Erstelle einen Datentyp `Wochentag`, der die Wochentage, also `Montag`, `Dienstag` etc., enthält.
 Folgende Operation soll sinnvoll möglich sein: `min Montag Freitag`. Siehe [hier](http://www.fh-wedel.de/~si/seminare/ws03/Ausarbeitung/2.simple/layout6.htm).
 
-## Bigramme
+## Bigramme auf Zeichenketten
 
 __Aufgabe:__ Speichere das Modul `Bigrams` aus der Vorlesung. Definiere die Variable `myName` und rufe `makeBounded myName` auf.
 
@@ -18,10 +18,15 @@ __Aufgabe:__ Warum wurde `Bigram` mit dem Key-Term `type` definiert und nicht mi
 type Bigram a = (Bounds a, Bounds a) 
 ```
 
-__Aufgabe:__ Als Korpus seien folgende Sätze gegeben: "Hans mag Erdbeeren.", "Hans mag keine Rosen.", "Maria mag Rosen.". Erzeuge eine Grammatik basierend auf den Bigrammen der drei Sätze. Bestünde das Deutsche nur aus diesen sechs Wörtern, wie gut ist unsere Grammatik? Teste dazu die Grammatik mit weiteren Sätzen aus diesem 6-Wort-Deutsch und beurteile somit die Güte der Grammatik als Klassifikator.
+__Aufgabe:__ Als Korpus seien folgende Sätze gegeben:
+ * "Hans mag Erdbeeren."
+ * "Hans mag keine Rosen."
+ * "Maria mag Rosen.".
+Erzeuge eine Grammatik basierend auf den Bigrammen der drei Sätze. Bestünde das Deutsche nur aus diesen sechs Wörtern, wie gut ist unsere Grammatik? Teste dazu die Grammatik mit weiteren Sätzen aus diesem 6-Wort-Deutsch und beurteile somit die Güte der Grammatik als Klassifikator.
 
+## Bigramme auf Bäumen
 
-
+__Aufgabe:__ Speichere das Modul `TreeGrams` aus der Vorlesung. Definiere den Baum S[ NP[ Hans ] VP[ V[ mag ] NP[ Erdbeeren] ] ] in einer Variablen `tree1`. Mache den Baum _rooted_.
 
 
 ## Notes
