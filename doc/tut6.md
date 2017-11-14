@@ -64,6 +64,8 @@ Korpus:
 
 __Aufgabe:__ Erstelle eine Baum-Bigramm-Grammatik für den Korpus.
 
+__Aufgabe:__ Erstelle diejenige Grammatik, die den Satz "Maria mag Rosen." erzeugt (_intersection grammar_).
+
 
 ### Hilfen zum Code
 ```
