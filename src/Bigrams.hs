@@ -1,6 +1,10 @@
-{- | This module introduces our first notion of a grammar; a way of
-   specifying a set of objects as being 'grammatical', and by
-   extension, everything else as being 'ungrammatical'.  -}
+-- | This module introduces our first notion of a grammar.  There are
+-- three main problems that a grammar should help us solve.
+--
+-- [Learning]: How could we learn a grammar from language data?
+-- [Parsing]: How could we use a grammar to understand (i.e. recognize) a sentence?
+-- [Production]: How could we use a grammar to construct a sentence?
+
 
 module Bigrams
 (
@@ -35,15 +39,15 @@ where
 
 -- 'catMaybes' has type @['Maybe' a] -> [a]@.  It removes 'Nothing'
 -- from a list, and turns a @'Just' a@ into an @a@.
-import Data.Maybe (catMaybes)
+import Data.Maybe (catMaybes,isNothing)
 
 -- $bounding
 --
 -- We would like to specify which symbols can be at the beginning, and
--- which at the end, of words.  In order to do this we need to /reify/
--- the notion of word-beginning and word-end.  We do this by defining
--- a new type (function), one which takes a type of symbols, and
--- returns the type of those symbols with boundaries.
+-- which at the end, of words.  In order to do this we /reify/ the
+-- notion of word-beginning and word-end.  We do this by defining a
+-- new type (function), one which takes a type of symbols, and returns
+-- the type of those symbols with boundaries.
 
 -- | In order to include information about which letters may begin a
 -- word, and which may end a word, we include two new symbols 'Start'
@@ -57,7 +61,7 @@ data Bounds a = Start | Finish | B a deriving (Eq,Ord)
 instance Bounded (Bounds a) where
   maxBound = Finish
   minBound = Start
-  
+
 -- | If I were to ask Haskell to derive a 'Show' instance for 'Bounds'
 -- automatically, it would print @'B' a@ as "B a".  I want it to
 -- simply ignore the 'B', so I have to tell it what to do myself.
@@ -190,7 +194,7 @@ isNotProhibited' b = unlic . makeBounded
 
 -- | An n-gram is a list of Bounded items of length @n@.  A 2-gram is
 -- a list of length 2, which is isomorphic to a pair (i.e. to a
--- 'Bigram').  
+-- 'Bigram').
 type NGram a = [Bounds a]
 
 fork :: (a -> b) -> (a -> c) -> a -> (b,c)
@@ -210,7 +214,8 @@ safeHead _ = Nothing
 -- collected.  If it is, we know that one of the lists is empty, and
 -- so we should stop trying to zip them together.  Otherwise, we carry
 -- on.
-zipN l = if Nothing `elem` hd then []
+zipN :: [[a]] ->[[a]]
+zipN l = if or (fmap isNothing hd) then []
               else (catMaybes hd) : zipN (fmap tail l)
   where
     hd = fmap safeHead l
@@ -218,34 +223,27 @@ zipN l = if Nothing `elem` hd then []
 -- | The essential idea is that we want to zip together @n@ copies of
 -- the input sentence, each one shifted one symbol back.  (This is
 -- thus a generalization of the @text2Grams@ function.)  We do this by
--- first copying the sentence @n@ times.  Then, we would like to shift
--- each copy back by one step per copy (so the original doesn't get
--- shifted at all, the first copy gets shifted back by one step, the
--- second by two, etc).  "Shifting back by one step" is implemented
--- via the @tail@ operation.  We make a list of functions which just
--- apply the @tail@ operation some number of times, such that the
--- first function doesn't apply it at all, the second function applies
--- it once, the third twice, the fourth thrice, etc, and we zip this
--- function with the list of copies of the sentence.  Then each
--- sentence is associated with a function that will shift it back the
--- appropriate number of symbols.  We then apply each function to the
--- sentence it is associated with, to get the desired list of shifted
--- copies of the original sentence.  Then we can simply call
--- @zipN@ to take care of the rest.
-textNGrams :: Eq a => Int -> [a] -> [NGram a]
-textNGrams n = zipN . fmap (uncurry ($)) . zip tailOp . replicate n . makeBounded
-  where
-    tailOp = iterate (tail . ) id
+-- @iterate@ing the @tail@ operation over the input list.  This
+-- creates a sequence (list) of copies of the input list, each with
+-- one less element than the one before.  We want just @n@ copies,
+-- however, where @n@ is the dimension of the n-gram we want to
+-- compute.  We thus @take@ the first @n@ copies of the input list.
+-- (If @n@ is greater than the length of the input list, we will get
+-- an error as @tail@ will be applied to an empty list.)  Then we can
+-- simply call @zipN@ to take care of the rest.
+textNGrams :: Int -> [a] -> [NGram a]
+textNGrams n = zipN . take n . iterate tail . makeBounded
 
 -- | Alternatively, we can simply walk through the list, each time
 -- taking the next @n@ segments as an n-gram.
-textNGrams' :: Eq a => Int -> [a] -> [NGram a]
+textNGrams' :: Int -> [a] -> [NGram a]
 textNGrams' n = getN . makeBounded
   where
-    getN bs | length nbs == n = nbs : getN (tail bs)
+    getN bs | longEnough bs = take n bs : getN (tail bs)
             | otherwise = []
       where
-        nbs = take n bs
+        longEnough xs = length xs >= n
+
 
 -- | Checking whether a sentence is licensed by an n-gram grammar then
 -- proceeds exactly as in the bigram case, except that we need to
@@ -255,5 +253,4 @@ licensedNGram :: Eq a => [NGram a] -> [a] -> Bool
 licensedNGram g = and . fmap (`elem` g) . textNGrams n
   where
     n = length $ head g
-
 

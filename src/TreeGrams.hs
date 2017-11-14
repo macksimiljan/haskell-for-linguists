@@ -5,13 +5,13 @@ module TreeGrams
   --
   -- We now extend our n-gram perspective on grammars from strings to
   -- trees.
-  
+
   -- ** Trees
-  Tree(..),
-  depth,
   subtrees,
   prune,
-  Rooted,
+  Rooted(Root,R),
+  unR,
+  isRoot,
   makeRooted,
   -- ** Bigrams
   TreeBiGram,
@@ -25,25 +25,12 @@ module TreeGrams
   -- $treengrams
   treeNGram,treeNGram',
   -- ** Classes
-  Bigram,Ngram,TwoGram
+  Bigrams,Ngrams,TwoGram
   )
 where
-
+import Trees
+import Bigrams
 import Data.Maybe (catMaybes,isNothing)
-
--- | A @'Tree' a@ (this definition comes from 'Data.Tree') consists of
--- a mother of type @a@, and a list of daughter trees.
-data Tree a = Node {mother :: a, daughters :: [Tree a]} deriving (Show, Eq, Ord)
-
--- | A 'Tree' is a 'Functor'; the data it carries can be modified in
--- place, whilst preserving the overall tree structure.
-instance Functor Tree where
-  fmap f (Node m ds) = Node (f m) (fmap (fmap f) ds)
-
--- | The 'depth' of a 'Tree' is one generalization of the 'length'
--- function on lists.  It counts how many levels the tree has.
-depth :: Tree a -> Int
-depth (Node _ xs) = 1 + maximum (0 : fmap depth xs)
 
 -- | The function 'subtrees' collects all of the subtrees of a tree
 subtrees :: Tree a -> [Tree a]
@@ -51,9 +38,10 @@ subtrees t@(Node _ ds) = t : concat (fmap subtrees ds)
 
 -- | @'prune' n@ is the generalization to 'Tree's of the list
 -- operation @'take' n@ (which returns the sublist of the first @n@
--- elements).  I want to rigidly enforce that the depth of a @'prune'
--- n@ed 'Tree' is @n@.  So if the input tree isn't big enough to
--- support a particular pruning depth, the result is 'Nothing'.
+-- elements).  I want to rigidly enforce that the depth of a
+-- @'prune'@d 'Tree' is the number we call 'prune' with.  So if the
+-- input tree isn't big enough to support a particular pruning depth,
+-- the result is 'Nothing'.
 --
 -- > if depth t < n
 -- > then isNothing (prune n t)
@@ -81,6 +69,13 @@ instance Functor Rooted where
   fmap f Root = Root
   fmap f (R a) = R (f a)
 
+unR :: Rooted a -> a
+unR (R a) = a
+
+isRoot :: Rooted a -> Bool
+isRoot Root = True
+isRoot _ = False
+
 -- | Given a 'Tree', we make it 'Rooted' by adding the symbol 'Root'
 -- at the top.
 makeRooted :: Tree a -> Tree (Rooted a)
@@ -103,9 +98,10 @@ type TreeBiGram a = (Rooted a, [Rooted a])
 
 -- | The strategy of walking along a list and recording the bigrams
 -- extends immediately to the case of trees.
-treeBiGram :: Tree (Rooted a) -> [TreeBiGram a]
-treeBiGram (Node x xs) =
-  (x,fmap mother xs) : concat (fmap treeBiGram xs)
+treeBiGram :: Tree a -> [TreeBiGram a]
+treeBiGram = tBG . makeRooted
+  where
+    tBG (Node x xs) = (x,fmap mother xs) : concat (fmap tBG xs)
 
 -- | The zipping approach can be stated at a high level similarly to
 -- the case of lists, where 'daughters' plays the role of 'tail'.
@@ -157,22 +153,22 @@ treeNGram' n t@(Node _ ds) = case prune n t of
 
 -- | The "almost-but-not-quite" similarity of the string and tree
 -- Bigram definitions motivates the /abstraction/ of bigrams into a
--- __class__.  The class 'Bigram' holds of a type function @f@ (we
+-- __class__.  The class 'Bigrams' holds of a type function @f@ (we
 -- have encountered @f = []@ and @f = Tree@) just in case there is a
 -- data type of /bigrams over f/ (written @'Bi' f@), and functions
 -- 'extract2grams' and 'is2Licensed' which behave as we expect.
 -- Moreover, as we have noted previously, 'is2Licensed' can be defined
 -- in terms of 'extract2grams'.
-class Bigram f where
+class Bigrams f where
   data Bi f :: * -> *
   extract2grams :: f a -> [Bi f a]
   is2Licensed :: Eq (Bi f a) => [Bi f a] -> f a -> Bool
   is2Licensed b = all (`elem` b) . extract2grams
--- | Similarly, 'Ngram's can be abstracted into a class as well.
+-- | Similarly, 'Ngrams' can be abstracted into a class as well.
 -- Other than the addition of an 'Int' parameter in the extraction
 -- function signature, we have included a function 'degree' which
 -- computes the size of the @n@-gram from a given n-gram.
-class Ngram f where
+class Ngrams f where
   data N f :: * -> *
   extractNgrams :: Int -> f a -> [N f a]
   degree :: N f a -> Int
@@ -184,23 +180,34 @@ class Ngram f where
 -- | The type @'TwoGram' f a@ is just a wrapper for an object of type
 -- @f a@.
 newtype TwoGram f a = TwoGram {unTwo :: f a}
--- | As one might think, if we have an 'Ngram' we can create a
--- 'Bigram'.  For bureaucratic reasons, we wrap the 'Ngram' type @f@
+-- | As one might think, if we have an 'Ngrams' we can create a
+-- 'Bigrams'.  For bureaucratic reasons, we wrap the 'Ngrams' type @f@
 -- in the type wrapper 'TwoGram'.
-instance Ngram f => Bigram (TwoGram f) where
+instance Ngrams f => Bigrams (TwoGram f) where
   data Bi (TwoGram f) a = NtoBi (N f a)
   extract2grams = fmap NtoBi . extractNgrams 2 . unTwo
 
--- | We can make 'Tree' into an instance of class 'Bigram'.  Because
+-- | We can make 'Tree' into an instance of class 'Bigrams'.  Because
 -- we want to keep the default definition of 'is2Licensed', we do not
 -- need to redefine it in the instance.
-instance Bigram Tree where
+instance Bigrams Tree where
   data Bi Tree a = BiGramTree (TreeBiGram a) deriving (Eq,Show)
-  extract2grams = fmap BiGramTree . treeBiGram . makeRooted
+  extract2grams = fmap BiGramTree . treeBiGram
+
+-- | Similarly, lists are also instances of 'Bigrams'.
+instance Bigrams [] where
+  data Bi [] a = BiGramList (Bigram a) deriving (Eq,Show)
+  extract2grams = fmap BiGramList . text2Grams
 
 -- | A 'Tree' is also an instance of the class 'Ngram'.
-instance Ngram Tree where
+instance Ngrams Tree where
   data N Tree a = NGramTree (TreeNGram a) deriving (Eq,Ord,Show)
-  extractNgrams n = fmap NGramTree . treeNGram' n . makeRooted
+  extractNgrams n = fmap NGramTree . treeNGram n
   degree (NGramTree t) = depth t
+
+-- | ...as are lists.
+instance Ngrams [] where
+  data N [] a = NGramList (NGram a) deriving (Eq,Show)
+  extractNgrams n = fmap NGramList . textNGrams n
+  degree (NGramList l) = length l
 

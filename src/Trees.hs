@@ -14,7 +14,7 @@ module Trees
   -- ** Generalizing @laenge@
   --
   -- $generalizingLaenge
-  countNodes, levels,
+  countNodes, depth,
   -- ** Generalizing @topDown@
   --
   -- $generalizingTopDown
@@ -24,7 +24,7 @@ module Trees
   -- $generalizingBottomUp
   bu, lc, glc,
   -- ** Generalizing @final@
-  -- 
+  --
   -- $generalizingFinal
   yield, rev_yield
   )
@@ -35,7 +35,7 @@ where
    a@.  This kind of object is written as @'Node' a [t1,...,tn]@.
    This (and more!) is already implemented in the module
    [Data.Tree](https://hackage.haskell.org/package/containers-0.5.10.2/docs/Data-Tree.html). -}
-data Tree a = Node a [Tree a] deriving Show
+data Tree a = Node a [Tree a] deriving (Eq,Ord,Show)
 
 {- | As we mentioned in class, a 'Tree' is a structure which
  /contains/ data.  We would like a way of changing the data inside
@@ -93,7 +93,7 @@ final (b:bs) = final bs
 -- lists.  This means that for any list function @f@, we should
 -- have:
 --
--- prop> f l = f' (list2Tree l) 
+-- prop> f l = f' (list2Tree l)
 --
 -- where @f'@ is the tree generalization of @f@, and @list2Tree@ is
 -- defined below.
@@ -116,12 +116,16 @@ list2Tree (b:bs) = Node b [list2Tree bs]
 
 -- | [Idea 1]: 'laenge' counts all the nodes of the tree
 --             (@sum@ adds all the numbers in a list)
+countNodes :: Tree a -> Int
 countNodes (Node b bs) = 1 + sum (fmap countNodes bs)
 
--- | [Idea 2]: 'laenge' counts how many levels there are in the tree
---          (@maximum@ finds the biggest number in a list)
-levels (Node b []) = 1
-levels (Node b bs) = 1 + maximum (fmap levels bs)
+-- | [Idea 2]: 'laenge' counts how many levels there are in the tree,
+--          i.e. how deep it is (@maximum@ finds the biggest number in
+--          a list.  It returns an error if the list is empty, and so
+--          I make sure the list is non-empty be putting a zero in
+--          it).
+depth :: Tree a -> Int
+depth (Node b bs) = 1 + maximum (0 : fmap depth bs)
 
 -- $generalizingTopDown
 --
@@ -129,12 +133,14 @@ levels (Node b bs) = 1 + maximum (fmap levels bs)
 
 -- | [Idea 1]: 'topDown' visits mother before any daughters (@concat@
 --            concatenates a list of lists together from left to right)
+td :: Tree a -> [a]
 td (Node b bs) = [b] ++ concat (fmap td bs)
 
 -- | [Idea 2]: 'topDown' visits each level at a time here it is easier to
 --          define a function operating on a list of trees.  So we
 --          define the generalization of 'topDown' in terms of this
 --          function.
+bf :: Tree a -> [a]
 bf t = breadthFirst [t]
   where
     breadthFirst [] = []
@@ -153,9 +159,11 @@ extractPaths (Node b bs) = fmap (\xs -> b:xs) (concat (fmap extractPaths bs))
 -- We would like to generalize 'bottomUp' to work on all trees.
 
 -- | [Idea 1]: 'bottomUp' visits mother after all daughters
+bu :: Tree a -> [a]
 bu (Node b bs) = concat (fmap bu bs) ++ [b]
 
 -- | [Idea 2]: 'bottomUp' visits mother after first daughter (if any)
+lc :: Tree a -> [a]
 lc (Node b []) = [b]
 lc (Node b (c:cs)) = lc c ++ [b] ++ concat (fmap lc cs)
 
@@ -171,6 +179,7 @@ lc (Node b (c:cs)) = lc c ++ [b] ++ concat (fmap lc cs)
 -- > laenge cs = k
 -- > cs ++ ds = bs
 --
+glc :: Int -> Tree a -> [a]
 glc k (Node b bs) = concat (fmap (glc k) cs ++ [[b]] ++ fmap (glc k) ds)
   where
     (cs,ds) = splitAt k bs
@@ -182,11 +191,12 @@ glc k (Node b bs) = concat (fmap (glc k) cs ++ [[b]] ++ fmap (glc k) ds)
 -- the leaves of the daughters.
 
 -- | [Idea 1]: 'final' reads the list of leaves from left to right
+yield :: Tree a -> [a]
 yield (Node b []) = [b]
 yield (Node b bs) = concat (fmap yield bs)
 
 -- | [Idea 2]: 'final' reads the list of leaves from right to left
+rev_yield :: Tree a -> [a]
 rev_yield (Node b []) = [b]
 rev_yield (Node b bs) = concat (fmap yield (reverse bs))
-
 
