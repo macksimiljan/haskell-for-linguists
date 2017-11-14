@@ -60,14 +60,15 @@ Korpus:
  * "Hans mag keine Rosen."
  * "Maria mag Rosen."
 
-### Baum-Bigramme
-
 __Aufgabe:__ Erstelle eine Baum-Bigramm-Grammatik für den Korpus.
 
 __Aufgabe:__ Erstelle diejenige Grammatik, die den Satz "Maria mag Rosen." erzeugt (_intersection grammar_).
+Was ist die Struktur dieses Satzes?
+
+__Aufgabe:__ Können wir auch den Satz "Mag Maria Rosen?" parsen?
 
 
-### Hilfen zum Code
+## Hilfen zum Code
 ```
 > partition (>3) [1,5,2,4,3]
 ([5,4],[1,2,3])
