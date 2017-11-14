@@ -55,21 +55,43 @@ tree2 = Node "S" [Node "NP" [Node "Hans" []], Node "VP" [Node "Neg" [Node "keine
 tree3 = Node "S" [Node "NP" [Node "Maria"[]], Node "VP" [Node "V" [Node "mag" []], Node "NP" [Node "Rosen" []]]]
 
 corpusTree = [tree1, tree2, tree3]
-grammarTree = simplifyGrammar ( concat [ treeBiGram (makeRooted x) | x <- corpusTree ])
+grammarTree = simplifyGrammar ( concat [ treeBiGram x | x <- corpusTree ])
 
 simplifyGrammar :: (Ord a, Eq a) => [a] -> [a]
 simplifyGrammar g = Set.toList (Set.fromList g)
 
 -- call: > putStr grammarStr
-grammar2Str :: (Show a) => [a] -> String
+grammar2Str :: (Show a) => [TreeBiGram a] -> String
 grammar2Str []     = ""
-grammar2Str (x:xs) = show(x) ++ "\n" ++ (grammar2Str xs)
+grammar2Str (x:xs) = showBigram(x) ++ "\n" ++ (grammar2Str xs)
+
+showBigram :: (Show a) => TreeBiGram a -> String
+showBigram bigram = show mother ++ "\t-->\t" ++ showDaughters daughters
+  where
+    mother = fst bigram
+    daughters = snd bigram
+
+showDaughters :: (Show a) => [Rooted a] -> String
+showDaughters []     = ""
+showDaughters (x:xs) = show(x) ++ "\t" ++ showDaughters xs
 
 (roots, nonRoots) = partition (isRoot . fst) grammarTree
 (leaves, nonLeaves) = partition (null . snd) nonRoots
 
-test1 = "Maria mag Erdbeeren."
-test1Rooted = [R "Maria", R "mag", R "Erdbeeren"]
 
-intersectionGrammar = simplifyGrammar (intParse grammarTree test1Rooted)
+
+
+
+
+testPos = "Maria mag Erdbeeren."
+testPosTokenized = ["Maria", "mag", "Erdbeeren"]
+
+intersectionGrammarPos = simplifyGrammar (intParse grammarTree testPosTokenized)
+
+testNeg = "Mag Maria Erdbeeren?"
+testNegTokenized = ["mag", "Maria", "Erdbeeren"]
+
+intersectionGrammarNeg = simplifyGrammar (intParse grammarTree testNegTokenized)
+
+
 
