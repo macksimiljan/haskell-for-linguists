@@ -1,4 +1,4 @@
-# Tutorium 7: Leafy-Trees & Top-Down-Parsing
+# Tutorium 7: Leafy-Trees
 
 ## Warm-up
 
