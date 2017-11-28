@@ -51,11 +51,17 @@ cafe2 = Cafe {name="Cafe Kater", iceCream="low", coffee="low", croissant="expens
 -- Intersection Parsing
 
 tree1 = Node "S" [Node "NP" [Node "Hans" []], Node "VP" [Node "V" [Node "mag" []], Node "NP" [Node "Erdbeeren" []]]]
-tree2 = Node "S" [Node "NP" [Node "Hans" []], Node "VP" [Node "Neg" [Node "keine" []], Node "VP" [Node "V" [Node "mag" []], Node "NP" [Node "Erdbeeren" []]]]]
+tree2 = Node "S" [Node "NP" [Node "Hans" []], Node "VP" [Node "V" [Node "mag" []], Node "NP" [Node "Det" [Node "keine" []], Node "N" [Node "Erdbeeren" []]]]]
 tree3 = Node "S" [Node "NP" [Node "Maria"[]], Node "VP" [Node "V" [Node "mag" []], Node "NP" [Node "Rosen" []]]]
 
 corpusTree = [tree1, tree2, tree3]
+-- treeBiGram :: Tree a -> [TreeBiGram a] 
 grammarTree = simplifyGrammar ( concat [ treeBiGram x | x <- corpusTree ])
+
+
+
+
+
 
 simplifyGrammar :: (Ord a, Eq a) => [a] -> [a]
 simplifyGrammar g = Set.toList (Set.fromList g)
@@ -92,6 +98,4 @@ testNeg = "Mag Maria Erdbeeren?"
 testNegTokenized = ["mag", "Maria", "Erdbeeren"]
 
 intersectionGrammarNeg = simplifyGrammar (intParse grammarTree testNegTokenized)
-
-
 
