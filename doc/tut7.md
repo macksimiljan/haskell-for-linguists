@@ -40,3 +40,17 @@ class TreeLike tree symbol | tree->symbol where
 
 __Hinweis:__ Um die Klassendefinition zu verstehen, ist vielleicht [dieser](https://stackoverflow.com/questions/2675655/whats-the-for-in-a-haskell-class-definition)
 Stackoverflow-Post hilfreich.
+
+__Aufgabe:__ Speichere jeden Teilbaum aus der Baumstruktur für "Hans lacht." in einer Variablen ab:
+1. für Bäume vom Typ `Tree`,
+2. für Bäume vom Typ `LeafyTree`.
+Importiere dafür das Modul `LeafyTrees`. Erstelle die Teilbäume mit `mkTree :: symbol -> [tree] -> tree`. Die Blätter müssen mit Typ annotiert sein. Beispiel:
+```haskell
+hans = mkTree "Hans" [] :: Tree String
+
+hans' = mkTree (Left "Hans") [] :: LeafyTree String String
+```
+
+__Hinweis:__ Verwende bei Leafy-Trees `Left` für Terminale, `Right` für Nicht-Terminale. Hintergrund:
+1. [Data.Either](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html)
+2. `instance TreeLike (LeafyTree leaf node) (Either leaf node) where`
