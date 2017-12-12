@@ -2,7 +2,7 @@
            FlexibleInstances,
            MultiParamTypeClasses,
            FunctionalDependencies
-#-}
+ #-}
 
 module LeafyTrees
 (
@@ -94,7 +94,7 @@ class TreeLike tree symbol | tree->symbol where
   depth :: (Enum i, Ord i) => tree -> i
   depth = succ . maximum . (toEnum 0 :) . map depth . daughters
   -- | We might want to trim an overgrown tree, by chopping off all of
-  -- its branches past a certain length.  
+  -- its branches past a certain length.
   prune :: Int -> tree -> Maybe tree
   prune 1 t = return $ mkTree (mother t) []
   prune n t | n < 1 = Nothing
@@ -148,7 +148,7 @@ instance TreeLike (LeafyTree leaf node) (Either leaf node) where
   -- where we allow non-leaf nodes without any children.
   isLeaf (Leaf _) = True
   isLeaf _ = False
-  
+
   mother (Leaf l) = Left l
   mother (LNode b _) = Right b
 
@@ -166,7 +166,4 @@ instance (Show node,Show leaf) => Show (LeafyTree node leaf) where
         show t
         ++ foldr (\s ss -> "\n" ++ s ++ ss) "" (map (((print_sep lvl ++ " |- ") ++ ) . showHelper (lvl + 1)) ts)
       print_sep lvl = iterate (" " ++) "" !! lvl
-
-
-              
 

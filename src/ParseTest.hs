@@ -170,7 +170,7 @@ gap_tvp v o = mkTree (Right "S[NP]")
 -- position.
 tvp_gap :: String
         -> LeafyTree String String
-        -> LeafyTree String String              
+        -> LeafyTree String String
 tvp_gap v s = mkTree (Right "S[NP]")
               [s,
                mkTree (Right "VP[NP]")
@@ -231,7 +231,7 @@ rel sgap = mkTree (Right "S'[NP]")
            [mkTree (Left "that") [],
              sgap
            ]
-           
+
 -- $lexicalizedConstructions
 --
 -- Using these basic sentence frames, we can define the actual trees

@@ -113,7 +113,7 @@ predict :: (Eq sym,Eq words)
         -> Maybe (Item words sym) -- ^ Might give us a new item
 predict r@(TreeBiGram x xs) (TopDownItem pos (b:bs) his) | x == b = Just $ mkItem pos (updatePredictions xs bs) (buildHistory r his)
                                                          | otherwise = Nothing
-predict _ _ = Nothing                                                           
+predict _ _ = Nothing
 
 -- $parsingAsSearch
 --
@@ -139,7 +139,8 @@ instance (Eq words,Eq sym,words ~ words',sym ~ sym') => Search (TopDownItem word
   successors (Info_TD (_,w)) item@(TopDownItem _ (b : _) _) | not (isRoot b)
                                                               && isLeft (unR b) = maybeToList $ scan w item
   successors (Info_TD (g,_)) item = mapMaybe (flip predict item) g
-  
+
+
 -- | We can immediately define a recognizer for a grammar in terms of
 -- search: a grammar recognizes a sentence just in case there is a
 -- final state in the search tree constructed given the grammar and

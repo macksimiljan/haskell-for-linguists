@@ -70,6 +70,4 @@ treeBiGram t = TreeBiGram root [mother t] : nub (tBG t)
               in
                 TreeBiGram (r $ mother t) (map mother ds) :
                 (ds >>= tBG)
-                
-
 

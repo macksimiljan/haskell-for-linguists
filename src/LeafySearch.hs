@@ -12,7 +12,7 @@ import Data.List (sortBy)
 import Data.Maybe (mapMaybe,maybeToList)
 import LeafyTrees
 
-  
+
 -- | a breadth first enumeration of the elements of a tree
 breadthFirst :: TreeLike tree symbol => tree -> [symbol]
 breadthFirst t = bf [t]
