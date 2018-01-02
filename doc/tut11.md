@@ -38,7 +38,7 @@ str <- getLine
 src <- readFile "myFileName"
 ```
 
-### Übung: Körpergröße
+## Übung: Körpergröße
 
 __Aufgabe:__ Wir haben folgende Liste von Messwerten zur Körpergröße.
 Die erste Spalte identifiziert eindeutig eine Reihe/ gemessene Person über die ersten beiden
@@ -100,9 +100,9 @@ __Hinweis:__ Um den Wert einer Variablen vom Typ `Either` zu erhalten, nutze die
 wie [hier](https://stackoverflow.com/questions/19839042/either-right-left-how-to-read-value) beschrieben.
 
 
-### Übung: Parser
+## Übung: Parser
 
-#### Grundlage
+### Grundlage
 
 __Aufgabe:__ Wähle einen trainierten Parser aus einem der bisherigen Tutorien aus und erstelle dafür eine
 Datei mit Testdatensätzen, z.B.
@@ -117,7 +117,7 @@ Lasse dir die Testdaten auf der Konsole anzeigen.
 
 __Aufgabe:__ Lasse dir für jeden Testdatensatz anzeigen, ob er grammatisch ist oder nicht.
 
-#### Erweiterung
+### Erweiterung
 
 __Aufgabe:__ Erweitere nun deine Testdatensätze um das erwartete und tatsächliche Grammatikalitätsurteil
 (letzteres sei mit `False` initialisiert)
@@ -161,7 +161,7 @@ updateActualField :: TestSentence -> Bool -> TestSentence
 updateActualField record value = record {actual = bool2Int value}
 ```
 
-#### Nächste Schritte
+### Nächste Schritte
 
 __Aufgabe:__ Wenn nun auch die Satzstruktur in der Ausgabedatei abgespeichert werden soll,
 an welchen Stellen muss der Programmcode geändert werden?
