@@ -140,6 +140,7 @@ instance (Eq words,Eq sym,words ~ words',sym ~ sym') => Search (TopDownItem word
                                                               && isLeft (unR b) = maybeToList $ scan w item
   successors (Info_TD (g,_)) item = mapMaybe (flip predict item) g
 
+
 -- | We can immediately define a recognizer for a grammar in terms of
 -- search: a grammar recognizes a sentence just in case there is a
 -- final state in the search tree constructed given the grammar and

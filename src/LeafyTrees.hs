@@ -67,7 +67,7 @@ data LeafyTree leaf node = Leaf leaf
 -- 'TreeLike' type.
 class TreeLike tree symbol | tree->symbol where
   {-# MINIMAL mother,daughters,mkTree #-}
-
+  
   -- | 'mother' returns the symbol at the root of the tree
   mother :: tree -> symbol
   -- | 'daughters' returns the list of daughters of the root of the tree
@@ -166,7 +166,4 @@ instance (Show node,Show leaf) => Show (LeafyTree node leaf) where
         show t
         ++ foldr (\s ss -> "\n" ++ s ++ ss) "" (map (((print_sep lvl ++ " |- ") ++ ) . showHelper (lvl + 1)) ts)
       print_sep lvl = iterate (" " ++) "" !! lvl
-
-
-
 
